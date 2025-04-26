@@ -1761,6 +1761,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     );
   } else if (request.type === "add-alarm-listener") {
     addAlarmListener();
+  } else if (request.type === "setup-screenshot-annotation") {
+    const screenshotData = request.imageData;
+    
+    // Send message to content script to set up annotation
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+      const currentTab = tabs[0];
+      
+      chrome.tabs.sendMessage(currentTab.id, {
+        type: "setup-screenshot-annotation",
+        imageData: screenshotData
+      });
+    });
+    
+    return true;
   }
 });
 

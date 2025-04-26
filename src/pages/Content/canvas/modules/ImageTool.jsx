@@ -6,7 +6,12 @@ const ImageTool = (canvas, src, toolSettings, setToolSettings, saveCanvas) => {
   let fabricImage = null;
   image.src = src;
 
-  setToolSettings({ ...toolSettings, tool: "select", isAddingImage: true });
+  setToolSettings({ 
+    ...toolSettings, 
+    tool: "select", 
+    isAddingImage: true,
+    screenshotMode: toolSettings.screenshotMode || false
+  });
 
   // Make all objects unselectable
   canvas.forEachObject((obj) => {

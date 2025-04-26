@@ -37,6 +37,7 @@ import {
   CircleFilledIcon,
   TriangleFilledIcon,
   TrashIcon,
+  SaveIcon,
 } from "../components/SVG";
 
 // Rewrite imports above with the chrome-extension URL inline
@@ -193,6 +194,38 @@ const DrawingToolbar = (props) => {
         </ToolTrigger>
       </Toolbar.ToggleGroup>
       <Toolbar.Separator className="ToolbarSeparator" />
+      {contentState.screenshotMode && (
+        <ToolTrigger
+          type="button"
+          content={chrome.i18n.getMessage("saveScreenshotTooltip") || "Save Screenshot"}
+          onClick={() => {
+            if (!contentState.canvas) return;
+            
+            const dataURL = contentState.canvas.toDataURL({
+              format: 'png',
+              quality: 1
+            });
+            
+            const link = document.createElement('a');
+            link.href = dataURL;
+            link.download = 'screenshot_annotated_' + new Date().toISOString().replace(/:/g, '-') + '.png';
+            link.click();
+            
+            setContentState((prevContentState) => ({
+              ...prevContentState,
+              drawingMode: false,
+              screenshotMode: false,
+              tool: 'select'
+            }));
+            
+            if (contentState.openToast) {
+              contentState.openToast(chrome.i18n.getMessage("screenshotSavedToast") || "Screenshot saved!");
+            }
+          }}
+        >
+          <SaveIcon />
+        </ToolTrigger>
+      )}
       <ToolTrigger
         type="button"
         content={chrome.i18n.getMessage("undoTooltip")}

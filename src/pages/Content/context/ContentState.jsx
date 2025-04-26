@@ -9,6 +9,7 @@ import React, {
 
 // Shortcuts
 import Shortcuts from "../shortcuts/Shortcuts";
+import ImageTool from "../canvas/modules/ImageTool";
 
 //create a context, with createContext api
 export const contentStateContext = createContext();
@@ -666,6 +667,7 @@ const ContentState = (props) => {
     zoomEnabled: false,
     offscreenRecording: false,
     isAddingImage: false,
+    screenshotMode: false,
     pipEnded: false,
     tabCaptureFrame: false,
     showOnboardingArrow: false,
@@ -1015,6 +1017,27 @@ const ContentState = (props) => {
           ...prevContentState,
           pendingRecording: false,
         }));
+      } else if (request.type === "setup-screenshot-annotation" && request.imageData) {
+        setContentState((prevContentState) => ({
+          ...prevContentState,
+          drawingMode: true,
+          tool: 'select',
+          showExtension: true,
+          showPopup: false,
+          screenshotMode: true
+        }));
+        
+        setTimeout(() => {
+          if (contentState.canvas && request.imageData) {
+            const imgTool = ImageTool(
+              contentState.canvas,
+              request.imageData,
+              contentState,
+              setContentState,
+              saveCanvas
+            );
+          }
+        }, 500);
       }
     },
     [contentStateRef.current, contentState]
