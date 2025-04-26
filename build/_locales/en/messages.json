@@ -187,6 +187,14 @@
     "message": "Screenshot captured!",
     "description": "Screenshot captured toast message"
   },
+  "saveScreenshotTooltip": {
+    "message": "Save screenshot",
+    "description": "Save screenshot button tooltip"
+  },
+  "screenshotSavedToast": {
+    "message": "Screenshot saved!",
+    "description": "Screenshot saved toast message"
+  },
   "disableCameraTooltip": {
     "message": "Disable camera",
     "description": "Disable camera tooltip"

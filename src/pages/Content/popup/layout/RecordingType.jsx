@@ -66,14 +66,21 @@ const RecordingType = (props) => {
     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
       const activeTab = tabs[0];
       chrome.tabs.captureVisibleTab(null, { format: 'png' }, function(dataUrl) {
-        const link = document.createElement('a');
-        link.href = dataUrl;
-        link.download = 'screenshot_' + new Date().toISOString().replace(/:/g, '-') + '.png';
-        link.click();
+        setContentState((prevContentState) => ({
+          ...prevContentState,
+          drawingMode: true,
+          tool: 'select',
+          showPopup: false,
+          showExtension: true,
+          screenshotMode: true
+        }));
         
-        if (contentState.openToast) {
-          contentState.openToast(chrome.i18n.getMessage("screenshotCapturedToast") || "Screenshot captured!");
-        }
+        window.close();
+        
+        chrome.runtime.sendMessage({
+          type: "setup-screenshot-annotation",
+          imageData: dataUrl
+        });
       });
     });
   };
