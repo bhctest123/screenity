@@ -9,7 +9,7 @@ import { CameraOffBlue, MicOffBlue } from "../../images/popup/images";
 
 import BackgroundEffects from "../components/BackgroundEffects";
 
-import { AlertIcon, TimeIcon, NoInternet } from "../../toolbar/components/SVG";
+import { AlertIcon, TimeIcon, NoInternet, ScreenshotIcon } from "../../toolbar/components/SVG";
 
 const RecordingType = (props) => {
   const [contentState, setContentState] = useContext(contentStateContext);
@@ -60,6 +60,22 @@ const RecordingType = (props) => {
   // Start recording
   const startStreaming = () => {
     contentState.startStreaming();
+  };
+
+  const takeScreenshot = () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+      const activeTab = tabs[0];
+      chrome.tabs.captureVisibleTab(null, { format: 'png' }, function(dataUrl) {
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = 'screenshot_' + new Date().toISOString().replace(/:/g, '-') + '.png';
+        link.click();
+        
+        if (contentState.openToast) {
+          contentState.openToast(chrome.i18n.getMessage("screenshotCapturedToast") || "Screenshot captured!");
+        }
+      });
+    });
   };
 
   useEffect(() => {
@@ -268,6 +284,18 @@ const RecordingType = (props) => {
           {contentState.customRegion && <RegionDimensions />}
         </div>
       )}
+      <button
+        role="button"
+        className="main-button screenshot-button"
+        tabIndex="0"
+        onClick={takeScreenshot}
+        style={{ marginBottom: "10px" }}
+      >
+        <span className="main-button-label">
+          {chrome.i18n.getMessage("screenshotButtonTooltip")}
+        </span>
+        <ScreenshotIcon />
+      </button>
       <button
         role="button"
         className="main-button recording-button"
